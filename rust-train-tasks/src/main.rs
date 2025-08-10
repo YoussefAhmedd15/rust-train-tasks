@@ -104,4 +104,69 @@ use std::io::stdin;
 
 // Task 3
 
-fn main() {}
+trait Account {
+    fn deposit(&mut self, amount: f64) -> Result<(), String>;
+    fn withdraw(&mut self, amount: f64) -> Result<(), String>;
+    fn balance(&self) -> f64;
+}
+
+struct BankAccount {
+    account_number: u32,
+    holder_name: String,
+    balance: f64,
+}
+
+impl Account for BankAccount {
+    fn deposit(&mut self, amount: f64) -> Result<(), String> {
+        if amount <= 0.0 {
+            return Err(String::from("Deposit must be more than 0"));
+        }
+        self.balance += amount;
+        Ok(())
+    }
+
+    fn withdraw(&mut self, amount: f64) -> Result<(), String> {
+        if amount <= 0.0 {
+            return Err(String::from("the amount must be greater than 0"));
+        }
+        if amount > self.balance {
+            return Err(String::from("Not enough money"));
+        }
+        self.balance -= amount;
+        Ok(())
+    }
+
+    fn balance(&self) -> f64 {
+        self.balance
+    }
+}
+fn main() {
+    let mut user1 = BankAccount {
+        account_number: 1,
+        balance: 1000.0,
+        holder_name: String::from("Youssef"),
+    };
+
+    let mut user2 = BankAccount {
+        account_number: 2,
+        balance: 1750.0,
+        holder_name: String::from("Mohamed"),
+    };
+
+    let result1 = user1.deposit(500.0);
+    if result1.is_ok() {
+        println!("Deposit succesful")
+    } else {
+        println!("Deposit failed: {}", result1.unwrap_err())
+    }
+
+    let result2 = user2.withdraw(2500.0);
+    if result2.is_ok() {
+        println!("Withdraw is succesful")
+    } else {
+        println!("Withdraw failed: {}", result2.unwrap_err())
+    }
+
+    println!("{} Balance: {}", user1.holder_name, user1.balance());
+    println!("{} Balance: {}", user2.holder_name, user2.balance());
+}
